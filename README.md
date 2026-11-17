@@ -32,14 +32,6 @@ python run_pipeline.py --input data/raw/supply_chain_dataset1.csv
 python -m http.server -d docs 8000   # 再開 http://localhost:8000
 ```
 
-沒有 CSV 想先測試流程：`python scripts/make_sample_data.py` 會產生**模擬資料**（僅供測試，結果無意義）。
-
-### 部署到 GitHub Pages
-
-1. 先在本機執行 `python run_pipeline.py`，確認 `docs/data.js` 已更新並一起 commit。
-2. Repo → Settings → Pages → Source 選 `Deploy from a branch`，Branch 選 `main`，資料夾選 `/docs`。
-3. 儀表板是純 HTML/CSS/JS，沒有外部依賴；`docs/data.js` 只包含**彙總後的結果**，不含原始 CSV。
-
 ## 專案結構
 
 ```
@@ -65,13 +57,6 @@ python -m http.server -d docs 8000   # 再開 http://localhost:8000
 - **風險分級尚未被驗證**：此資料集的 `stockout_flag` 全部為 0，沒有變異，無法檢驗風險級別是否對應較高的缺貨率。儀表板會在這種情況下自動顯示警示。
 - 情境分析是壓力測試，不是需求預測。
 - 資料為公開資料集，本專案是方法示範，不代表任何真實企業的營運狀況。
-
-## 與原 notebook 的差異
-
-- 風險級別修正：原本 Medium 的條件是 `>= P50`，但此資料的 P50 為 0%，導致指標為 0 的組合也被歸為 Medium、Low 永遠不會出現（原輸出的 ABC × 風險表只有 High / Medium）。
-  現在 High / Medium 都要求指標 > 0，指標為 0 的組合為 Low。**High 與 P1 的組合不受影響**，P2 / P3 的數量會和原 notebook 不同。
-- ABC 分類的 bins 上限加了極小的容差，避免浮點誤差讓最後一個 SKU 被分成 NaN。
-- 流程拆成可測試的函式，並新增 CSV 輸出與儀表板。
 
 ## 主要結果（91,250 筆觀測；2024-01-01 ~ 2024-12-30）
 
